@@ -14,7 +14,7 @@ async function sendText(to, text) {
   try {
     await api.post(`/sendText/${INST}`, {
       number: to,
-      textMessage: { text }
+      text
     })
   } catch (err) {
     console.error('[whatsapp] sendText erro:', err.response?.data || err.message)
@@ -26,12 +26,10 @@ async function sendDocument(to, fileUrl, fileName, caption = '') {
   try {
     await api.post(`/sendMedia/${INST}`, {
       number: to,
-      mediaMessage: {
-        mediatype: 'document',
-        media: fileUrl,
-        fileName,
-        caption
-      }
+      mediatype: 'document',
+      media: fileUrl,
+      fileName,
+      caption
     })
   } catch (err) {
     console.error('[whatsapp] sendDocument erro:', err.response?.data || err.message)
