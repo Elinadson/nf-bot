@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NF Bot — Painel Admin</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,sans-serif;background:#0f0f0f;color:#e0e0e0;min-height:100vh}
+  .header{background:#1a1a1a;border-bottom:1px solid #2a2a2a;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+  .header h1{font-size:16px;font-weight:600;color:#fff}
+  .header span{font-size:12px;color:#666}
+  .login-wrap{display:flex;align-items:center;justify-content:center;height:calc(100vh - 57px)}
+  .login-box{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:32px;width:340px}
+  .login-box h2{font-size:18px;margin-bottom:20px;color:#fff}
+  .login-box input{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;outline:none}
+  .login-box input:focus{border-color:#acff04}
+  .login-box button{width:100%;margin-top:12px;background:#acff04;color:#0a0a0a;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer}
+  .container{max-width:1100px;margin:0 auto;padding:24px}
+  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #2a2a2a;padding-bottom:0}
+  .tab{padding:10px 20px;font-size:13px;cursor:pointer;color:#888;border-bottom:2px solid transparent;transition:all .15s}
+  .tab.active{color:#acff04;border-bottom-color:#acff04}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+  .stat{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:16px;text-align:center}
+  .stat .n{font-size:28px;font-weight:700;color:#acff04}
+  .stat .l{font-size:11px;color:#666;margin-top:4px}
+  .card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden;margin-bottom:16px}
+  .card-header{padding:14px 16px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between}
+  .card-header h3{font-size:13px;font-weight:600;color:#fff}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{padding:10px 12px;text-align:left;color:#666;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #2a2a2a}
+  td{padding:10px 12px;border-bottom:1px solid #1e1e1e;color:#ccc}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#1f1f1f}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+  .badge-pending{background:#2a2200;color:#fbbf24}
+  .badge-sent{background:#0a1628;color:#60a5fa}
+  .badge-processing{background:#1a1040;color:#a78bfa}
+  .badge-issued{background:#0a2818;color:#34d399}
+  .badge-delivered{background:#0a2818;color:#86efac}
+  .badge-cancelled{background:#1f1212;color:#f87171}
+  .btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:background .15s}
+  .btn-primary{background:#acff04;color:#0a0a0a}
+  .btn-primary:hover{background:#c4ff2e}
+  .btn-ghost{background:#2a2a2a;color:#ccc}
+  .btn-ghost:hover{background:#333}
+  .btn-danger{background:#3f1212;color:#f87171}
+  .btn-danger:hover{background:#5a1a1a}
+  .btn-sm{padding:4px 10px;font-size:11px}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100}
+  .modal{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto}
+  .modal h3{font-size:16px;margin-bottom:18px;color:#fff}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;color:#888;margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:#acff04}
+  .field textarea{resize:vertical;min-height:60px}
+  .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .empty{text-align:center;padding:40px;color:#555;font-size:13px}
+  .search-bar{display:flex;gap:8px;margin-bottom:16px}
+  .search-bar input{flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;outline:none}
+  .search-bar input:focus{border-color:#acff04}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🤖 NF Bot — Painel Admin</h1>
+  <span id="headerInfo">NDD Estudio Criativo</span>
+</div>
+
+<!-- Login -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <h2>Acesso ao painel</h2>
+    <input type="password" id="keyInput" placeholder="Chave de acesso" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- App -->
+<div class="container" id="app" style="display:none">
+
+  <!-- Stats -->
+  <div class="stats" id="statsGrid"></div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('requests')">Solicitações</div>
+    <div class="tab" onclick="showTab('clients')">Clientes</div>
+  </div>
+
+  <!-- Solicitações -->
+  <div id="tabRequests">
+    <div class="search-bar">
+      <input type="text" id="reqSearch" placeholder="Buscar por cliente, serviço..." oninput="filterRequests()"/>
+      <button class="btn btn-ghost btn-sm" onclick="loadRequests()">↺ Atualizar</button>
+      <button class="btn btn-ghost btn-sm" onclick="checkDrive()">🔍 Verificar Drive</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th><th>Serviço</th><th>Valor</th><th>Referência</th><th>Status</th><th>Data</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="reqBody"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Clientes -->
+  <div id="tabClients" style="display:none">
+    <div class="search-bar">
+      <input type="text" id="clientSearch" placeholder="Buscar cliente..." oninput="filterClients()"/>
+      <button class="btn btn-primary btn-sm" onclick="openClientModal()">+ Novo cliente</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th><th>WhatsApp</th><th>Email</th><th>CNPJ/CPF</th><th>Serviço padrão</th><th>Valor padrão</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="clientBody"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cliente -->
+<div class="modal-overlay" id="clientModal" style="display:none" onclick="if(event.target===this)closeClientModal()">
+  <div class="modal">
+    <h3 id="clientModalTitle">Novo cliente</h3>
+    <input type="hidden" id="clientId"/>
+    <div class="field"><label>Nome *</label><input id="clientName" placeholder="Nome completo ou empresa"/></div>
+    <div class="row2">
+      <div class="field"><label>WhatsApp * (só números)</label><input id="clientWpp" placeholder="5511999999999"/></div>
+      <div class="field"><label>Email *</label><input id="clientEmail" type="email" placeholder="email@empresa.com"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>CNPJ</label><input id="clientCnpj" placeholder="12.345.678/0001-99"/></div>
+      <div class="field"><label>CPF</label><input id="clientCpf" placeholder="000.000.000-00"/></div>
+    </div>
+    <div class="field"><label>Empresa</label><input id="clientCompany" placeholder="Razão social"/></div>
+    <div class="row2">
+      <div class="field"><label>Serviço padrão</label><input id="clientService" placeholder="Gestão de Tráfego"/></div>
+      <div class="field"><label>Valor padrão (R$)</label><input id="clientValue" type="number" placeholder="2500"/></div>
+    </div>
+    <div class="field"><label>Observações</label><textarea id="clientNotes" placeholder="Notas internas..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeClientModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveClient()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Status NF -->
+<div class="modal-overlay" id="statusModal" style="display:none" onclick="if(event.target===this)closeStatusModal()">
+  <div class="modal" style="width:400px">
+    <h3>Atualizar status</h3>
+    <input type="hidden" id="statusReqId"/>
+    <div class="field">
+      <label>Novo status</label>
+      <select id="statusSelect">
+        <option value="pending">⏳ Pendente</option>
+        <option value="sent">📤 Enviada à contabilidade</option>
+        <option value="processing">⚙️ Em processamento</option>
+        <option value="issued">✅ Emitida</option>
+        <option value="delivered">📧 Entregue ao cliente</option>
+        <option value="cancelled">❌ Cancelada</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeStatusModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveStatus()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let ADMIN_KEY = ''
+let allRequests = []
+let allClients  = []
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const key = document.getElementById('keyInput').value.trim()
+  if (!key) return
+  ADMIN_KEY = key
+  document.getElementById('loginWrap').style.display = 'none'
+  document.getElementById('app').style.display = 'block'
+  loadAll()
+}
+
+async function apiFetch(path, opts = {}) {
+  const res = await fetch('/admin' + path, {
+    headers: { 'x-admin-key': ADMIN_KEY, 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    ...opts
+  })
+  if (res.status === 401) { location.reload(); return null }
+  return res.json()
+}
+
+// ── Load all ──────────────────────────────────────────────────────────────────
+async function loadAll() {
+  await Promise.all([loadStats(), loadRequests(), loadClients()])
+}
+
+async function loadStats() {
+  const stats = await apiFetch('/stats')
+  if (!stats) return
+  document.getElementById('statsGrid').innerHTML = [
+    ['Total', stats.total],
+    ['Pendentes', stats.pending],
+    ['Na contabilidade', stats.sent + stats.processing],
+    ['Emitidas', stats.issued],
+    ['Entregues', stats.delivered],
+  ].map(([l, n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('')
+}
+
+// ── Solicitações ──────────────────────────────────────────────────────────────
+async function loadRequests() {
+  const data = await apiFetch('/requests')
+  if (!data) return
+  allRequests = data
+  renderRequests(allRequests)
+}
+
+function filterRequests() {
+  const q = document.getElementById('reqSearch').value.toLowerCase()
+  renderRequests(allRequests.filter(r =>
+    (r.clients?.name || '').toLowerCase().includes(q) ||
+    (r.service || '').toLowerCase().includes(q) ||
+    (r.reference || '').toLowerCase().includes(q)
+  ))
+}
+
+const statusLabels = {
+  pending:    '<span class="badge badge-pending">⏳ Pendente</span>',
+  sent:       '<span class="badge badge-sent">📤 Enviada</span>',
+  processing: '<span class="badge badge-processing">⚙️ Processando</span>',
+  issued:     '<span class="badge badge-issued">✅ Emitida</span>',
+  delivered:  '<span class="badge badge-delivered">📧 Entregue</span>',
+  cancelled:  '<span class="badge badge-cancelled">❌ Cancelada</span>',
+}
+
+function renderRequests(list) {
+  const tbody = document.getElementById('reqBody')
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Nenhuma solicitação encontrada</td></tr>'; return }
+  tbody.innerHTML = list.map(r => {
+    const val  = Number(r.value).toLocaleString('pt-BR', {style:'currency', currency:'BRL'})
+    const date = new Date(r.created_at).toLocaleDateString('pt-BR')
+    return `<tr>
+      <td><strong>${r.clients?.name || '—'}</strong></td>
+      <td>${r.service}</td>
+      <td>${val}</td>
+      <td>${r.reference || '—'}</td>
+      <td>${statusLabels[r.status] || r.status}</td>
+      <td>${date}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="openStatusModal('${r.id}','${r.status}')">Editar</button></td>
+    </tr>`
+  }).join('')
+}
+
+async function checkDrive() {
+  await apiFetch('/drive/check', { method: 'POST' })
+  alert('Verificação do Drive iniciada!')
+  setTimeout(loadRequests, 3000)
+}
+
+// ── Clientes ──────────────────────────────────────────────────────────────────
+async function loadClients() {
+  const data = await apiFetch('/clients')
+  if (!data) return
+  allClients = data
+  renderClients(allClients)
+}
+
+function filterClients() {
+  const q = document.getElementById('clientSearch').value.toLowerCase()
+  renderClients(allClients.filter(c =>
+    (c.name || '').toLowerCase().includes(q) ||
+    (c.email || '').toLowerCase().includes(q) ||
+    (c.whatsapp || '').includes(q)
+  ))
+}
+
+function renderClients(list) {
+  const tbody = document.getElementById('clientBody')
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Nenhum cliente cadastrado</td></tr>'; return }
+  tbody.innerHTML = list.map(c => {
+    const val = c.default_value ? Number(c.default_value).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : '—'
+    return `<tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.whatsapp}</td>
+      <td>${c.email}</td>
+      <td>${c.cnpj || c.cpf || '—'}</td>
+      <td>${c.default_service || '—'}</td>
+      <td>${val}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="openClientModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}','${c.name}')">Excluir</button>
+      </td>
+    </tr>`
+  }).join('')
+}
+
+// ── Modal Cliente ─────────────────────────────────────────────────────────────
+function openClientModal(client) {
+  document.getElementById('clientModal').style.display = 'flex'
+  if (client) {
+    document.getElementById('clientModalTitle').textContent = 'Editar cliente'
+    document.getElementById('clientId').value      = client.id || ''
+    document.getElementById('clientName').value    = client.name || ''
+    document.getElementById('clientWpp').value     = client.whatsapp || ''
+    document.getElementById('clientEmail').value   = client.email || ''
+    document.getElementById('clientCnpj').value    = client.cnpj || ''
+    document.getElementById('clientCpf').value     = client.cpf || ''
+    document.getElementById('clientCompany').value = client.company || ''
+    document.getElementById('clientService').value = client.default_service || ''
+    document.getElementById('clientValue').value   = client.default_value || ''
+    document.getElementById('clientNotes').value   = client.notes || ''
+  } else {
+    document.getElementById('clientModalTitle').textContent = 'Novo cliente'
+    ;['clientId','clientName','clientWpp','clientEmail','clientCnpj','clientCpf','clientCompany','clientService','clientValue','clientNotes']
+      .forEach(id => document.getElementById(id).value = '')
+  }
+}
+
+function closeClientModal() {
+  document.getElementById('clientModal').style.display = 'none'
+}
+
+async function saveClient() {
+  const id = document.getElementById('clientId').value
+  const payload = {
+    ...(id ? { id } : {}),
+    name:            document.getElementById('clientName').value.trim(),
+    whatsapp:        document.getElementById('clientWpp').value.trim().replace(/\D/g,''),
+    email:           document.getElementById('clientEmail').value.trim(),
+    cnpj:            document.getElementById('clientCnpj').value.trim() || null,
+    cpf:             document.getElementById('clientCpf').value.trim() || null,
+    company:         document.getElementById('clientCompany').value.trim() || null,
+    default_service: document.getElementById('clientService').value.trim() || null,
+    default_value:   parseFloat(document.getElementById('clientValue').value) || null,
+    notes:           document.getElementById('clientNotes').value.trim() || null,
+  }
+  if (!payload.name || !payload.whatsapp || !payload.email) {
+    alert('Preencha nome, WhatsApp e email.')
+    return
+  }
+  await apiFetch('/clients', { method: 'POST', body: JSON.stringify(payload) })
+  closeClientModal()
+  loadClients()
+}
+
+async function deleteClient(id, name) {
+  if (!confirm(`Remover cliente "${name}"?`)) return
+  await apiFetch(`/clients/${id}`, { method: 'DELETE' })
+  loadClients()
+}
+
+// ── Modal Status ──────────────────────────────────────────────────────────────
+function openStatusModal(id, currentStatus) {
+  document.getElementById('statusModal').style.display = 'flex'
+  document.getElementById('statusReqId').value = id
+  document.getElementById('statusSelect').value = currentStatus
+}
+
+function closeStatusModal() {
+  document.getElementById('statusModal').style.display = 'none'
+}
+
+async function saveStatus() {
+  const id     = document.getElementById('statusReqId').value
+  const status = document.getElementById('statusSelect').value
+  await apiFetch(`/requests/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) })
+  closeStatusModal()
+  loadAll()
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  document.getElementById('tabRequests').style.display = tab === 'requests' ? '' : 'none'
+  document.getElementById('tabClients').style.display  = tab === 'clients'  ? '' : 'none'
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', (i === 0 && tab === 'requests') || (i === 1 && tab === 'clients'))
+  })
+}
+
+// Auto-refresh a cada 30s
+setInterval(() => { if (ADMIN_KEY) loadAll() }, 30000)
+</script>
+</body>
+</html>

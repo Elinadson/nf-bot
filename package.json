@@ -1,0 +1,25 @@
+{
+  "name": "nf-bot",
+  "version": "1.0.0",
+  "description": "Bot WhatsApp para solicitação e entrega de notas fiscais",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "axios": "^1.7.2",
+    "@supabase/supabase-js": "^2.44.4",
+    "@anthropic-ai/sdk": "^0.24.3",
+    "nodemailer": "^6.9.14",
+    "googleapis": "^140.0.1",
+    "node-cron": "^3.0.3",
+    "dotenv": "^16.4.5",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
