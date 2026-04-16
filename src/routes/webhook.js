@@ -10,8 +10,11 @@ router.post('/whatsapp', async (req, res) => {
   try {
     const body = req.body
 
+    // Log payload bruto para debug
+    console.log('[webhook] payload:', JSON.stringify(body).substring(0, 300))
+
     // Ignora eventos que não são mensagens
-    if (body.event !== 'messages.upsert') return
+    if (body.event !== 'messages.upsert' && body.event !== 'MESSAGES_UPSERT') return
     if (!body.data?.messages) return
 
     for (const msg of body.data.messages) {
