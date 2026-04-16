@@ -148,6 +148,17 @@
       <div class="field"><label>Serviço padrão</label><input id="clientService" placeholder="Gestão de Tráfego"/></div>
       <div class="field"><label>Valor padrão (R$)</label><input id="clientValue" type="number" placeholder="2500"/></div>
     </div>
+    <div class="row2">
+      <div class="field">
+        <label>Dia de cobrança (1-31)</label>
+        <input id="clientBillingDay" type="number" min="1" max="31" placeholder="Ex: 5"/>
+        <small style="color:#666;font-size:11px">Bot lembra todo mês neste dia</small>
+      </div>
+      <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px">
+        <input type="checkbox" id="clientIsAdmin" style="width:16px;height:16px;accent-color:#acff04"/>
+        <label style="margin:0;font-size:13px;color:#ccc">É administrador</label>
+      </div>
+    </div>
     <div class="field"><label>Observações</label><textarea id="clientNotes" placeholder="Notas internas..."></textarea></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeClientModal()">Cancelar</button>
@@ -321,11 +332,14 @@ function openClientModal(client) {
     document.getElementById('clientCompany').value = client.company || ''
     document.getElementById('clientService').value = client.default_service || ''
     document.getElementById('clientValue').value   = client.default_value || ''
-    document.getElementById('clientNotes').value   = client.notes || ''
+    document.getElementById('clientNotes').value       = client.notes || ''
+    document.getElementById('clientBillingDay').value  = client.billing_day || ''
+    document.getElementById('clientIsAdmin').checked   = client.is_admin || false
   } else {
     document.getElementById('clientModalTitle').textContent = 'Novo cliente'
-    ;['clientId','clientName','clientWpp','clientEmail','clientCnpj','clientCpf','clientCompany','clientService','clientValue','clientNotes']
+    ;['clientId','clientName','clientWpp','clientEmail','clientCnpj','clientCpf','clientCompany','clientService','clientValue','clientNotes','clientBillingDay']
       .forEach(id => document.getElementById(id).value = '')
+    document.getElementById('clientIsAdmin').checked = false
   }
 }
 
@@ -346,6 +360,8 @@ async function saveClient() {
     default_service: document.getElementById('clientService').value.trim() || null,
     default_value:   parseFloat(document.getElementById('clientValue').value) || null,
     notes:           document.getElementById('clientNotes').value.trim() || null,
+    billing_day:     parseInt(document.getElementById('clientBillingDay').value) || null,
+    is_admin:        document.getElementById('clientIsAdmin').checked,
   }
   if (!payload.name || !payload.whatsapp || !payload.email) {
     alert('Preencha nome, WhatsApp e email.')

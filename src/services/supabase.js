@@ -28,6 +28,29 @@ async function getAllClients() {
   return data || []
 }
 
+// Busca clientes por nome (busca parcial, case-insensitive)
+async function searchClientsByName(name) {
+  const { data, error } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('active', true)
+    .ilike('name', `%${name}%`)
+    .order('name')
+  if (error) console.error('[supabase] searchClientsByName:', error.message)
+  return data || []
+}
+
+// Busca clientes com billing_day igual ao dia informado
+async function getClientsByBillingDay(day) {
+  const { data, error } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('active', true)
+    .eq('billing_day', day)
+  if (error) console.error('[supabase] getClientsByBillingDay:', error.message)
+  return data || []
+}
+
 async function upsertClient(client) {
   const { data, error } = await supabase
     .from('clients')
@@ -140,7 +163,8 @@ async function logMessage({ whatsapp, direction, body, clientId = null, requestI
 }
 
 module.exports = {
-  getClientByPhone, getAllClients, upsertClient, deleteClient,
+  getClientByPhone, getAllClients, searchClientsByName, getClientsByBillingDay,
+  upsertClient, deleteClient,
   createRequest, updateRequest, getRequestsByStatus, getAllRequests, getRequestById,
   getConversationState, setConversationState, clearConversationState,
   logMessage

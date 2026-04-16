@@ -110,8 +110,54 @@ function accountingNotification(request) {
   )
 }
 
+// ── Admin: menu principal ─────────────────────────────────────────────────────
+function adminGreeting() {
+  return (
+    `👋 *Painel Admin — NDD Estudio Criativo*\n\n` +
+    `O que deseja fazer?\n\n` +
+    `1️⃣ Solicitar nota para um cliente\n` +
+    `2️⃣ Ver solicitações em aberto\n\n` +
+    `Ou envie diretamente: *nota para [nome do cliente]*`
+  )
+}
+
+// ── Admin: lista de clientes encontrados ─────────────────────────────────────
+function adminClientList(clients) {
+  let msg = `🔍 *Clientes encontrados:*\n\n`
+  clients.forEach((c, i) => {
+    const val = c.default_value
+      ? Number(c.default_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      : '—'
+    msg += `${i + 1}. *${c.name}*\n`
+    msg += `   ${c.default_service || '—'} — ${val}\n\n`
+  })
+  msg += `Responda com o *número* do cliente desejado.`
+  return msg
+}
+
+// ── Admin: cliente não encontrado ─────────────────────────────────────────────
+function adminClientNotFound(name) {
+  return `❌ Nenhum cliente encontrado com o nome *"${name}"*.\n\nVerifique o nome e tente novamente.`
+}
+
+// ── Admin: lembrete agendado ──────────────────────────────────────────────────
+function scheduledReminder(client) {
+  const val = client.default_value
+    ? Number(client.default_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    : '—'
+  return (
+    `🗓️ *Lembrete de Nota Fiscal*\n\n` +
+    `Hoje é o dia programado para solicitar a nota de:\n\n` +
+    `👤 *${client.name}*\n` +
+    `📝 ${client.default_service || '—'}\n` +
+    `💰 ${val}\n\n` +
+    `Confirma o envio da solicitação para a contabilidade? (sim/não)`
+  )
+}
+
 module.exports = {
   greeting, unknownClient, confirmRequest, requestSent, requestCancelled,
   notaReady, statusMessage, askService, askValue, askReference,
-  accountingNotification
+  accountingNotification,
+  adminGreeting, adminClientList, adminClientNotFound, scheduledReminder
 }

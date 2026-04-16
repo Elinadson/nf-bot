@@ -39,6 +39,13 @@ function parseValue(text) {
   return isNaN(val) ? null : val
 }
 
+// ── Extrai nome do cliente de comandos admin ──────────────────────────────────
+// Ex: "nota para João Silva" → "João Silva"
+function extractClientName(text) {
+  const match = text.match(/nota\s+para\s+(.+)/i)
+  return match ? match[1].trim() : null
+}
+
 // ── Handler principal de mensagens ────────────────────────────────────────────
 async function handleMessage({ from, body }) {
   const text  = (body || '').trim()
@@ -49,6 +56,11 @@ async function handleMessage({ from, body }) {
   // Log entrada
   const client = await db.getClientByPhone(phone)
   await db.logMessage({ whatsapp: phone, direction: 'in', body: text, clientId: client?.id })
+
+  // ── Redireciona para fluxo admin se for administrador ──────────────────────
+  if (client?.is_admin) {
+    return handleAdminMessage({ phone, text, admin: client })
+  }
 
   // Estado atual da conversa
   const conv = await db.getConversationState(phone) || { state: 'idle', context: {} }
@@ -261,4 +273,179 @@ async function onNFIssued(request, fileUrl, fileName) {
   })
 }
 
-module.exports = { handleMessage, onNFIssued }
+// ── Fluxo admin ───────────────────────────────────────────────────────────────
+async function handleAdminMessage({ phone, text, admin }) {
+  const textLower = text.toLowerCase().trim()
+
+  async function reply(msg) {
+    await wpp.sendText(phone, msg)
+    await db.logMessage({ whatsapp: phone, direction: 'out', body: msg, clientId: admin.id })
+  }
+
+  const conv = await db.getConversationState(phone) || { state: 'admin_idle', context: {} }
+
+  switch (conv.state) {
+
+    // ── Idle admin ────────────────────────────────────────────────────────────
+    case 'admin_idle':
+    default: {
+      // Comando direto: "nota para João"
+      const clientName = extractClientName(text)
+      if (clientName) {
+        return searchAndSelectClient({ phone, reply, clientName, admin })
+      }
+
+      const intent = await detectIntent(text)
+
+      if (intent === 'SOLICITAR_NF' || text === '1') {
+        await reply(`Para quem é a nota? Envie: *nota para [nome do cliente]*`)
+        return
+      }
+
+      if (intent === 'VER_STATUS' || text === '2') {
+        const all = await db.getAllRequests({ limit: 10 })
+        const pending = all.filter(r => ['pending','sent','processing'].includes(r.status))
+        if (!pending.length) {
+          await reply(`Nenhuma solicitação em aberto no momento.`)
+          return
+        }
+        let msg = `📋 *Solicitações em aberto:*\n\n`
+        pending.forEach((r, i) => {
+          const val = Number(r.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          const status = { pending: '⏳', sent: '📤', processing: '⚙️' }[r.status] || ''
+          msg += `${i+1}. ${status} *${r.clients?.name}* — ${val}\n   ${r.reference || r.service}\n\n`
+        })
+        await reply(msg.trim())
+        return
+      }
+
+      await reply(tmpl.adminGreeting())
+      return
+    }
+
+    // ── Selecionando cliente da lista ─────────────────────────────────────────
+    case 'admin_selecting_client': {
+      const clients = conv.context.clients || []
+      const idx = parseInt(text) - 1
+      if (isNaN(idx) || idx < 0 || idx >= clients.length) {
+        await reply(`Responda com o número da lista (1 a ${clients.length}).`)
+        return
+      }
+      const selected = clients[idx]
+      await startAdminRequestFlow({ phone, reply, client: selected, admin })
+      return
+    }
+
+    // ── Confirmação admin ─────────────────────────────────────────────────────
+    case 'admin_awaiting_confirmation': {
+      const intent = await detectIntent(text)
+      if (intent === 'CONFIRMAR' || textLower === 'sim' || textLower === 's') {
+        const ctx     = conv.context
+        const client  = ctx.client
+
+        const request = await db.createRequest({
+          client_id:     client.id,
+          service:       ctx.service,
+          value:         ctx.value,
+          document:      ctx.document,
+          reference:     ctx.reference,
+          status:        'pending',
+          requested_via: 'admin'
+        })
+
+        await notifyAccounting({ ...request, clients: client })
+        await db.updateRequest(request.id, { status: 'sent', notified_at: new Date().toISOString() })
+        await db.clearConversationState(phone)
+        await reply(`✅ Solicitação criada e contabilidade notificada!\n\nCliente: *${client.name}*\nReferência: *${ctx.reference}*`)
+        return
+      }
+
+      if (intent === 'CANCELAR' || textLower === 'não' || textLower === 'nao' || textLower === 'n') {
+        await db.clearConversationState(phone)
+        await reply(`Cancelado. Qualquer coisa é só chamar.`)
+        return
+      }
+
+      await reply(`Responda *sim* para confirmar ou *não* para cancelar.`)
+      return
+    }
+
+    // ── Lembrete agendado aguardando confirmação ───────────────────────────────
+    case 'admin_awaiting_scheduled_confirm': {
+      const intent = await detectIntent(text)
+      if (intent === 'CONFIRMAR' || textLower === 'sim' || textLower === 's') {
+        const client = conv.context.client
+        await startAdminRequestFlow({ phone, reply, client, admin, skipConfirm: false })
+        return
+      }
+      if (intent === 'CANCELAR' || textLower === 'não' || textLower === 'nao' || textLower === 'n') {
+        await db.clearConversationState(phone)
+        await reply(`Ok, lembrete ignorado. Você pode solicitar manualmente quando quiser.`)
+        return
+      }
+      await reply(`Responda *sim* para iniciar a solicitação ou *não* para ignorar.`)
+      return
+    }
+  }
+}
+
+// ── Busca clientes e mostra lista (ou seleciona direto se só 1) ───────────────
+async function searchAndSelectClient({ phone, reply, clientName, admin }) {
+  const clients = await db.searchClientsByName(clientName)
+
+  if (!clients.length) {
+    await reply(tmpl.adminClientNotFound(clientName))
+    return
+  }
+
+  if (clients.length === 1) {
+    await startAdminRequestFlow({ phone, reply, client: clients[0], admin })
+    return
+  }
+
+  await db.setConversationState(phone, 'admin_selecting_client', { clients }, admin.id)
+  await reply(tmpl.adminClientList(clients))
+}
+
+// ── Monta contexto e mostra confirmação para admin ───────────────────────────
+async function startAdminRequestFlow({ phone, reply, client, admin, skipConfirm = false }) {
+  const now    = new Date()
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
+  const ctx = {
+    client,
+    service:   client.default_service || 'Serviço',
+    value:     client.default_value   || 0,
+    document:  client.cnpj || client.cpf || '—',
+    reference: `${months[now.getMonth()]}/${now.getFullYear()}`
+  }
+
+  await db.setConversationState(phone, 'admin_awaiting_confirmation', ctx, admin.id)
+  await reply(tmpl.confirmRequest(client, ctx.service, ctx.value, ctx.document, ctx.reference))
+}
+
+// ── Lembrete agendado: chamado pelo scheduler ─────────────────────────────────
+async function sendScheduledReminder(client) {
+  const adminPhone = process.env.ADMIN_PHONE
+  if (!adminPhone) {
+    console.warn('[scheduler] ADMIN_PHONE não configurado')
+    return
+  }
+
+  await wpp.sendText(adminPhone, tmpl.scheduledReminder(client))
+  await db.setConversationState(
+    adminPhone,
+    'admin_awaiting_scheduled_confirm',
+    { client },
+    null
+  )
+  await db.logMessage({
+    whatsapp:  adminPhone,
+    direction: 'out',
+    body:      tmpl.scheduledReminder(client),
+    clientId:  client.id
+  })
+
+  console.log(`[scheduler] Lembrete enviado para admin — cliente: ${client.name}`)
+}
+
+module.exports = { handleMessage, onNFIssued, sendScheduledReminder }

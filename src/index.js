@@ -3,10 +3,11 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 const express = require('express')
 const path    = require('path')
 
-const webhookRoutes = require('./routes/webhook')
-const adminRoutes   = require('./routes/admin')
+const webhookRoutes    = require('./routes/webhook')
+const adminRoutes      = require('./routes/admin')
 const { setupWebhook } = require('./services/whatsapp')
-const { startWatcher }  = require('./services/drive')
+const { startWatcher } = require('./services/drive')
+const { startScheduler } = require('./services/scheduler')
 
 const app  = express()
 const PORT = process.env.PORT || 3001
@@ -48,4 +49,7 @@ app.listen(PORT, async () => {
   } else {
     console.warn('[init] Google Drive não configurado — watcher desativado')
   }
+
+  // Inicia scheduler de lembretes diários
+  startScheduler()
 })
