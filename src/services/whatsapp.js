@@ -17,7 +17,7 @@ async function sendText(to, text) {
       text
     })
   } catch (err) {
-    console.error('[whatsapp] sendText erro:', err.response?.data || err.message)
+    console.error('[whatsapp] sendText erro:', JSON.stringify(err.response?.data, null, 2) || err.message)
   }
 }
 
