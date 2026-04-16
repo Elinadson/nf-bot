@@ -16,29 +16,33 @@
   .login-box input{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;outline:none}
   .login-box input:focus{border-color:#acff04}
   .login-box button{width:100%;margin-top:12px;background:#acff04;color:#0a0a0a;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer}
-  .container{max-width:1100px;margin:0 auto;padding:24px}
-  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #2a2a2a;padding-bottom:0}
+  .container{max-width:1300px;margin:0 auto;padding:24px}
+  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #2a2a2a}
   .tab{padding:10px 20px;font-size:13px;cursor:pointer;color:#888;border-bottom:2px solid transparent;transition:all .15s}
   .tab.active{color:#acff04;border-bottom-color:#acff04}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px}
   .stat{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:16px;text-align:center}
-  .stat .n{font-size:28px;font-weight:700;color:#acff04}
+  .stat .n{font-size:26px;font-weight:700;color:#acff04}
   .stat .l{font-size:11px;color:#666;margin-top:4px}
   .card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden;margin-bottom:16px}
-  .card-header{padding:14px 16px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between}
-  .card-header h3{font-size:13px;font-weight:600;color:#fff}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{padding:10px 12px;text-align:left;color:#666;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #2a2a2a}
-  td{padding:10px 12px;border-bottom:1px solid #1e1e1e;color:#ccc}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{padding:9px 10px;text-align:left;color:#666;font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #2a2a2a;white-space:nowrap}
+  td{padding:9px 10px;border-bottom:1px solid #1a1a1a;color:#ccc;vertical-align:middle}
   tr:last-child td{border-bottom:none}
   tr:hover td{background:#1f1f1f}
-  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+  .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500}
+  .badge-yes{background:#0a2818;color:#4ade80}
+  .badge-no{background:#1f1f1f;color:#555}
   .badge-pending{background:#2a2200;color:#fbbf24}
   .badge-sent{background:#0a1628;color:#60a5fa}
   .badge-processing{background:#1a1040;color:#a78bfa}
   .badge-issued{background:#0a2818;color:#34d399}
   .badge-delivered{background:#0a2818;color:#86efac}
   .badge-cancelled{background:#1f1212;color:#f87171}
+  .badge-pix{background:#0a1a2a;color:#38bdf8}
+  .badge-boleto{background:#1a1a0a;color:#facc15}
+  .badge-cartao{background:#1a0a1a;color:#c084fc}
+  .badge-permuta{background:#1a1a1a;color:#94a3b8}
   .btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:background .15s}
   .btn-primary{background:#acff04;color:#0a0a0a}
   .btn-primary:hover{background:#c4ff2e}
@@ -48,19 +52,24 @@
   .btn-danger:hover{background:#5a1a1a}
   .btn-sm{padding:4px 10px;font-size:11px}
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100}
-  .modal{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto}
+  .modal{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:24px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
   .modal h3{font-size:16px;margin-bottom:18px;color:#fff}
-  .field{margin-bottom:14px}
-  .field label{display:block;font-size:12px;color:#888;margin-bottom:6px}
-  .field input,.field select,.field textarea{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:11px;color:#888;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+  .field input,.field select,.field textarea{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;outline:none}
   .field input:focus,.field select:focus,.field textarea:focus{border-color:#acff04}
-  .field textarea{resize:vertical;min-height:60px}
-  .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+  .field textarea{resize:vertical;min-height:50px}
+  .field select option{background:#1a1a1a}
+  .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
   .empty{text-align:center;padding:40px;color:#555;font-size:13px}
-  .search-bar{display:flex;gap:8px;margin-bottom:16px}
-  .search-bar input{flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;outline:none}
+  .search-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .search-bar input{flex:1;min-width:180px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;outline:none}
   .search-bar input:focus{border-color:#acff04}
+  .check-cell{text-align:center}
+  .toggle{width:14px;height:14px;accent-color:#acff04;cursor:pointer}
+  .section-title{font-size:10px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid #2a2a2a}
 </style>
 </head>
 <body>
@@ -82,48 +91,56 @@
 <!-- App -->
 <div class="container" id="app" style="display:none">
 
-  <!-- Stats -->
   <div class="stats" id="statsGrid"></div>
 
-  <!-- Tabs -->
   <div class="tabs">
-    <div class="tab active" onclick="showTab('requests')">Solicitações</div>
-    <div class="tab" onclick="showTab('clients')">Clientes</div>
+    <div class="tab active" onclick="showTab('clients')">Clientes</div>
+    <div class="tab" onclick="showTab('requests')">Solicitações de NF</div>
   </div>
 
-  <!-- Solicitações -->
-  <div id="tabRequests">
+  <!-- ── Clientes ── -->
+  <div id="tabClients">
+    <div class="search-bar">
+      <input type="text" id="clientSearch" placeholder="Buscar por nome..." oninput="filterClients()"/>
+      <button class="btn btn-ghost btn-sm" onclick="loadClients()">↺ Atualizar</button>
+      <button class="btn btn-primary btn-sm" onclick="openClientModal()">+ Novo cliente</button>
+    </div>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>WhatsApp</th>
+            <th>Dia Pgto</th>
+            <th>Forma Pgto</th>
+            <th>Nota Fiscal</th>
+            <th>Valor</th>
+            <th>Serviço</th>
+            <th>Obs</th>
+            <th>Admin</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="clientBody"><tr><td colspan="10" class="empty">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Solicitações ── -->
+  <div id="tabRequests" style="display:none">
     <div class="search-bar">
       <input type="text" id="reqSearch" placeholder="Buscar por cliente, serviço..." oninput="filterRequests()"/>
       <button class="btn btn-ghost btn-sm" onclick="loadRequests()">↺ Atualizar</button>
       <button class="btn btn-ghost btn-sm" onclick="checkDrive()">🔍 Verificar Drive</button>
     </div>
-    <div class="card">
+    <div class="card" style="overflow-x:auto">
       <table>
         <thead>
           <tr>
-            <th>Cliente</th><th>Serviço</th><th>Valor</th><th>Referência</th><th>Status</th><th>Data</th><th></th>
+            <th>Cliente</th><th>Serviço</th><th>Valor</th><th>Referência</th><th>Status</th><th>Solicitado</th><th></th>
           </tr>
         </thead>
         <tbody id="reqBody"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Clientes -->
-  <div id="tabClients" style="display:none">
-    <div class="search-bar">
-      <input type="text" id="clientSearch" placeholder="Buscar cliente..." oninput="filterClients()"/>
-      <button class="btn btn-primary btn-sm" onclick="openClientModal()">+ Novo cliente</button>
-    </div>
-    <div class="card">
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th><th>WhatsApp</th><th>Email</th><th>CNPJ/CPF</th><th>Serviço padrão</th><th>Valor padrão</th><th></th>
-          </tr>
-        </thead>
-        <tbody id="clientBody"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -134,33 +151,67 @@
   <div class="modal">
     <h3 id="clientModalTitle">Novo cliente</h3>
     <input type="hidden" id="clientId"/>
+
+    <p class="section-title">Identificação</p>
     <div class="field"><label>Nome *</label><input id="clientName" placeholder="Nome completo ou empresa"/></div>
     <div class="row2">
       <div class="field"><label>WhatsApp * (só números)</label><input id="clientWpp" placeholder="5511999999999"/></div>
-      <div class="field"><label>Email *</label><input id="clientEmail" type="email" placeholder="email@empresa.com"/></div>
+      <div class="field"><label>Email</label><input id="clientEmail" type="email" placeholder="email@empresa.com"/></div>
     </div>
     <div class="row2">
       <div class="field"><label>CNPJ</label><input id="clientCnpj" placeholder="12.345.678/0001-99"/></div>
       <div class="field"><label>CPF</label><input id="clientCpf" placeholder="000.000.000-00"/></div>
     </div>
-    <div class="field"><label>Empresa</label><input id="clientCompany" placeholder="Razão social"/></div>
-    <div class="row2">
-      <div class="field"><label>Serviço padrão</label><input id="clientService" placeholder="Gestão de Tráfego"/></div>
-      <div class="field"><label>Valor padrão (R$)</label><input id="clientValue" type="number" placeholder="2500"/></div>
+
+    <p class="section-title">Financeiro</p>
+    <div class="row3">
+      <div class="field">
+        <label>Dia de pagamento</label>
+        <input id="clientBillingDay" type="number" min="1" max="31" placeholder="Ex: 20"/>
+      </div>
+      <div class="field">
+        <label>Forma de pagamento</label>
+        <select id="clientPaymentMethod">
+          <option value="">— Selecione —</option>
+          <option value="Pix">Pix</option>
+          <option value="Boleto">Boleto</option>
+          <option value="Cartão">Cartão</option>
+          <option value="Permuta">Permuta</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input id="clientValue" type="number" placeholder="2500"/>
+      </div>
     </div>
+
+    <p class="section-title">Nota Fiscal</p>
     <div class="row2">
       <div class="field">
-        <label>Dia de cobrança (1-31)</label>
-        <input id="clientBillingDay" type="number" min="1" max="31" placeholder="Ex: 5"/>
-        <small style="color:#666;font-size:11px">Bot lembra todo mês neste dia</small>
+        <label>Serviço padrão</label>
+        <input id="clientService" placeholder="Gestão de Tráfego"/>
       </div>
-      <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px">
-        <input type="checkbox" id="clientIsAdmin" style="width:16px;height:16px;accent-color:#acff04"/>
-        <label style="margin:0;font-size:13px;color:#ccc">É administrador</label>
+      <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:18px">
+        <input type="checkbox" id="clientNeedsNf" class="toggle"/>
+        <label style="margin:0;color:#ccc;font-size:13px;text-transform:none;letter-spacing:0">Emite nota fiscal</label>
       </div>
     </div>
-    <div class="field"><label>Observações</label><textarea id="clientNotes" placeholder="Notas internas..."></textarea></div>
+
+    <p class="section-title">Configurações</p>
+    <div class="row2">
+      <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:6px">
+        <input type="checkbox" id="clientIsAdmin" class="toggle"/>
+        <label style="margin:0;color:#ccc;font-size:13px;text-transform:none;letter-spacing:0">É administrador</label>
+      </div>
+      <div class="field">
+        <label>Empresa</label>
+        <input id="clientCompany" placeholder="Razão social"/>
+      </div>
+    </div>
+    <div class="field"><label>Observações</label><textarea id="clientNotes" placeholder="Observações internas..."></textarea></div>
+
     <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="btnDeleteClient" style="display:none;margin-right:auto" onclick="deleteCurrentClient()">Excluir</button>
       <button class="btn btn-ghost" onclick="closeClientModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="saveClient()">Salvar</button>
     </div>
@@ -169,7 +220,7 @@
 
 <!-- Modal Status NF -->
 <div class="modal-overlay" id="statusModal" style="display:none" onclick="if(event.target===this)closeStatusModal()">
-  <div class="modal" style="width:400px">
+  <div class="modal" style="width:360px">
     <h3>Atualizar status</h3>
     <input type="hidden" id="statusReqId"/>
     <div class="field">
@@ -194,8 +245,8 @@
 let ADMIN_KEY = ''
 let allRequests = []
 let allClients  = []
+let currentClientId = null
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
 function doLogin() {
   const key = document.getElementById('keyInput').value.trim()
   if (!key) return
@@ -207,28 +258,159 @@ function doLogin() {
 
 async function apiFetch(path, opts = {}) {
   const res = await fetch('/admin' + path, {
-    headers: { 'x-admin-key': ADMIN_KEY, 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    headers: { 'x-admin-key': ADMIN_KEY, 'Content-Type': 'application/json', ...(opts.headers||{}) },
     ...opts
   })
   if (res.status === 401) { location.reload(); return null }
   return res.json()
 }
 
-// ── Load all ──────────────────────────────────────────────────────────────────
 async function loadAll() {
-  await Promise.all([loadStats(), loadRequests(), loadClients()])
+  await Promise.all([loadStats(), loadClients(), loadRequests()])
 }
 
 async function loadStats() {
-  const stats = await apiFetch('/stats')
-  if (!stats) return
+  const s = await apiFetch('/stats')
+  if (!s) return
   document.getElementById('statsGrid').innerHTML = [
-    ['Total', stats.total],
-    ['Pendentes', stats.pending],
-    ['Na contabilidade', stats.sent + stats.processing],
-    ['Emitidas', stats.issued],
-    ['Entregues', stats.delivered],
-  ].map(([l, n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('')
+    ['Total NFs', s.total],
+    ['Pendentes', s.pending],
+    ['Na contabilidade', s.sent + s.processing],
+    ['Emitidas', s.issued],
+    ['Entregues', s.delivered],
+  ].map(([l,n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('')
+}
+
+// ── Clientes ──────────────────────────────────────────────────────────────────
+async function loadClients() {
+  const data = await apiFetch('/clients')
+  if (!data) return
+  allClients = data
+  renderClients(allClients)
+}
+
+function filterClients() {
+  const q = document.getElementById('clientSearch').value.toLowerCase()
+  renderClients(allClients.filter(c =>
+    (c.name||'').toLowerCase().includes(q) ||
+    (c.whatsapp||'').includes(q) ||
+    (c.default_service||'').toLowerCase().includes(q)
+  ))
+}
+
+const pmBadge = {
+  'Pix':     '<span class="badge badge-pix">Pix</span>',
+  'Boleto':  '<span class="badge badge-boleto">Boleto</span>',
+  'Cartão':  '<span class="badge badge-cartao">Cartão</span>',
+  'Permuta': '<span class="badge badge-permuta">Permuta</span>',
+}
+
+function renderClients(list) {
+  const tbody = document.getElementById('clientBody')
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="10" class="empty">Nenhum cliente cadastrado</td></tr>'
+    return
+  }
+  tbody.innerHTML = list.map(c => {
+    const val = c.default_value
+      ? Number(c.default_value).toLocaleString('pt-BR', {style:'currency', currency:'BRL'})
+      : '—'
+    const nfBadge = c.needs_nf
+      ? '<span class="badge badge-yes">✓ Sim</span>'
+      : '<span class="badge badge-no">Não</span>'
+    const adminBadge = c.is_admin
+      ? '<span class="badge badge-yes">Admin</span>'
+      : ''
+    return `<tr style="cursor:pointer" onclick="openClientModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+      <td><strong style="color:#fff">${c.name}</strong></td>
+      <td style="color:#888">${c.whatsapp || '—'}</td>
+      <td style="text-align:center">${c.billing_day ? 'Dia ' + c.billing_day : '—'}</td>
+      <td>${pmBadge[c.payment_method] || (c.payment_method || '—')}</td>
+      <td class="check-cell">${nfBadge}</td>
+      <td>${val}</td>
+      <td style="color:#888">${c.default_service || '—'}</td>
+      <td style="color:#666;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes || ''}</td>
+      <td class="check-cell">${adminBadge}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openClientModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">Editar</button></td>
+    </tr>`
+  }).join('')
+}
+
+// ── Modal Cliente ─────────────────────────────────────────────────────────────
+function openClientModal(client) {
+  document.getElementById('clientModal').style.display = 'flex'
+  const isEdit = !!client
+  document.getElementById('clientModalTitle').textContent = isEdit ? 'Editar cliente' : 'Novo cliente'
+  document.getElementById('btnDeleteClient').style.display = isEdit ? 'block' : 'none'
+  currentClientId = client?.id || null
+
+  const fields = ['clientId','clientName','clientWpp','clientEmail','clientCnpj','clientCpf',
+                  'clientCompany','clientService','clientValue','clientNotes','clientBillingDay']
+
+  if (isEdit) {
+    document.getElementById('clientId').value            = client.id || ''
+    document.getElementById('clientName').value          = client.name || ''
+    document.getElementById('clientWpp').value           = client.whatsapp || ''
+    document.getElementById('clientEmail').value         = client.email || ''
+    document.getElementById('clientCnpj').value          = client.cnpj || ''
+    document.getElementById('clientCpf').value           = client.cpf || ''
+    document.getElementById('clientCompany').value       = client.company || ''
+    document.getElementById('clientService').value       = client.default_service || ''
+    document.getElementById('clientValue').value         = client.default_value || ''
+    document.getElementById('clientNotes').value         = client.notes || ''
+    document.getElementById('clientBillingDay').value    = client.billing_day || ''
+    document.getElementById('clientPaymentMethod').value = client.payment_method || ''
+    document.getElementById('clientNeedsNf').checked     = client.needs_nf || false
+    document.getElementById('clientIsAdmin').checked     = client.is_admin || false
+  } else {
+    fields.forEach(id => document.getElementById(id).value = '')
+    document.getElementById('clientPaymentMethod').value = ''
+    document.getElementById('clientNeedsNf').checked     = false
+    document.getElementById('clientIsAdmin').checked     = false
+  }
+}
+
+function closeClientModal() {
+  document.getElementById('clientModal').style.display = 'none'
+  currentClientId = null
+}
+
+async function saveClient() {
+  const id = document.getElementById('clientId').value
+  const payload = {
+    ...(id ? { id } : {}),
+    name:            document.getElementById('clientName').value.trim(),
+    whatsapp:        document.getElementById('clientWpp').value.trim().replace(/\D/g,''),
+    email:           document.getElementById('clientEmail').value.trim() || null,
+    cnpj:            document.getElementById('clientCnpj').value.trim() || null,
+    cpf:             document.getElementById('clientCpf').value.trim() || null,
+    company:         document.getElementById('clientCompany').value.trim() || null,
+    default_service: document.getElementById('clientService').value.trim() || null,
+    default_value:   parseFloat(document.getElementById('clientValue').value) || null,
+    notes:           document.getElementById('clientNotes').value.trim() || null,
+    billing_day:     parseInt(document.getElementById('clientBillingDay').value) || null,
+    payment_method:  document.getElementById('clientPaymentMethod').value || null,
+    needs_nf:        document.getElementById('clientNeedsNf').checked,
+    is_admin:        document.getElementById('clientIsAdmin').checked,
+  }
+  if (!payload.name || !payload.whatsapp) {
+    alert('Preencha pelo menos nome e WhatsApp.')
+    return
+  }
+  const res = await apiFetch('/clients', { method: 'POST', body: JSON.stringify(payload) })
+  if (res?.error) { alert('Erro: ' + res.error); return }
+  closeClientModal()
+  loadClients()
+  loadStats()
+}
+
+async function deleteCurrentClient() {
+  if (!currentClientId) return
+  const name = document.getElementById('clientName').value
+  if (!confirm(`Remover cliente "${name}"?`)) return
+  await apiFetch(`/clients/${currentClientId}`, { method: 'DELETE' })
+  closeClientModal()
+  loadClients()
 }
 
 // ── Solicitações ──────────────────────────────────────────────────────────────
@@ -242,9 +424,9 @@ async function loadRequests() {
 function filterRequests() {
   const q = document.getElementById('reqSearch').value.toLowerCase()
   renderRequests(allRequests.filter(r =>
-    (r.clients?.name || '').toLowerCase().includes(q) ||
-    (r.service || '').toLowerCase().includes(q) ||
-    (r.reference || '').toLowerCase().includes(q)
+    (r.clients?.name||'').toLowerCase().includes(q) ||
+    (r.service||'').toLowerCase().includes(q) ||
+    (r.reference||'').toLowerCase().includes(q)
   ))
 }
 
@@ -259,17 +441,20 @@ const statusLabels = {
 
 function renderRequests(list) {
   const tbody = document.getElementById('reqBody')
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Nenhuma solicitação encontrada</td></tr>'; return }
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Nenhuma solicitação encontrada</td></tr>'
+    return
+  }
   tbody.innerHTML = list.map(r => {
     const val  = Number(r.value).toLocaleString('pt-BR', {style:'currency', currency:'BRL'})
     const date = new Date(r.created_at).toLocaleDateString('pt-BR')
     return `<tr>
-      <td><strong>${r.clients?.name || '—'}</strong></td>
+      <td><strong>${r.clients?.name||'—'}</strong></td>
       <td>${r.service}</td>
       <td>${val}</td>
-      <td>${r.reference || '—'}</td>
-      <td>${statusLabels[r.status] || r.status}</td>
-      <td>${date}</td>
+      <td>${r.reference||'—'}</td>
+      <td>${statusLabels[r.status]||r.status}</td>
+      <td style="color:#666">${date}</td>
       <td><button class="btn btn-ghost btn-sm" onclick="openStatusModal('${r.id}','${r.status}')">Editar</button></td>
     </tr>`
   }).join('')
@@ -281,114 +466,15 @@ async function checkDrive() {
   setTimeout(loadRequests, 3000)
 }
 
-// ── Clientes ──────────────────────────────────────────────────────────────────
-async function loadClients() {
-  const data = await apiFetch('/clients')
-  if (!data) return
-  allClients = data
-  renderClients(allClients)
-}
-
-function filterClients() {
-  const q = document.getElementById('clientSearch').value.toLowerCase()
-  renderClients(allClients.filter(c =>
-    (c.name || '').toLowerCase().includes(q) ||
-    (c.email || '').toLowerCase().includes(q) ||
-    (c.whatsapp || '').includes(q)
-  ))
-}
-
-function renderClients(list) {
-  const tbody = document.getElementById('clientBody')
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Nenhum cliente cadastrado</td></tr>'; return }
-  tbody.innerHTML = list.map(c => {
-    const val = c.default_value ? Number(c.default_value).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}) : '—'
-    return `<tr>
-      <td><strong>${c.name}</strong></td>
-      <td>${c.whatsapp}</td>
-      <td>${c.email}</td>
-      <td>${c.cnpj || c.cpf || '—'}</td>
-      <td>${c.default_service || '—'}</td>
-      <td>${val}</td>
-      <td style="display:flex;gap:6px">
-        <button class="btn btn-ghost btn-sm" onclick="openClientModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">Editar</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}','${c.name}')">Excluir</button>
-      </td>
-    </tr>`
-  }).join('')
-}
-
-// ── Modal Cliente ─────────────────────────────────────────────────────────────
-function openClientModal(client) {
-  document.getElementById('clientModal').style.display = 'flex'
-  if (client) {
-    document.getElementById('clientModalTitle').textContent = 'Editar cliente'
-    document.getElementById('clientId').value      = client.id || ''
-    document.getElementById('clientName').value    = client.name || ''
-    document.getElementById('clientWpp').value     = client.whatsapp || ''
-    document.getElementById('clientEmail').value   = client.email || ''
-    document.getElementById('clientCnpj').value    = client.cnpj || ''
-    document.getElementById('clientCpf').value     = client.cpf || ''
-    document.getElementById('clientCompany').value = client.company || ''
-    document.getElementById('clientService').value = client.default_service || ''
-    document.getElementById('clientValue').value   = client.default_value || ''
-    document.getElementById('clientNotes').value       = client.notes || ''
-    document.getElementById('clientBillingDay').value  = client.billing_day || ''
-    document.getElementById('clientIsAdmin').checked   = client.is_admin || false
-  } else {
-    document.getElementById('clientModalTitle').textContent = 'Novo cliente'
-    ;['clientId','clientName','clientWpp','clientEmail','clientCnpj','clientCpf','clientCompany','clientService','clientValue','clientNotes','clientBillingDay']
-      .forEach(id => document.getElementById(id).value = '')
-    document.getElementById('clientIsAdmin').checked = false
-  }
-}
-
-function closeClientModal() {
-  document.getElementById('clientModal').style.display = 'none'
-}
-
-async function saveClient() {
-  const id = document.getElementById('clientId').value
-  const payload = {
-    ...(id ? { id } : {}),
-    name:            document.getElementById('clientName').value.trim(),
-    whatsapp:        document.getElementById('clientWpp').value.trim().replace(/\D/g,''),
-    email:           document.getElementById('clientEmail').value.trim(),
-    cnpj:            document.getElementById('clientCnpj').value.trim() || null,
-    cpf:             document.getElementById('clientCpf').value.trim() || null,
-    company:         document.getElementById('clientCompany').value.trim() || null,
-    default_service: document.getElementById('clientService').value.trim() || null,
-    default_value:   parseFloat(document.getElementById('clientValue').value) || null,
-    notes:           document.getElementById('clientNotes').value.trim() || null,
-    billing_day:     parseInt(document.getElementById('clientBillingDay').value) || null,
-    is_admin:        document.getElementById('clientIsAdmin').checked,
-  }
-  if (!payload.name || !payload.whatsapp || !payload.email) {
-    alert('Preencha nome, WhatsApp e email.')
-    return
-  }
-  await apiFetch('/clients', { method: 'POST', body: JSON.stringify(payload) })
-  closeClientModal()
-  loadClients()
-}
-
-async function deleteClient(id, name) {
-  if (!confirm(`Remover cliente "${name}"?`)) return
-  await apiFetch(`/clients/${id}`, { method: 'DELETE' })
-  loadClients()
-}
-
 // ── Modal Status ──────────────────────────────────────────────────────────────
-function openStatusModal(id, currentStatus) {
+function openStatusModal(id, current) {
   document.getElementById('statusModal').style.display = 'flex'
   document.getElementById('statusReqId').value = id
-  document.getElementById('statusSelect').value = currentStatus
+  document.getElementById('statusSelect').value = current
 }
-
 function closeStatusModal() {
   document.getElementById('statusModal').style.display = 'none'
 }
-
 async function saveStatus() {
   const id     = document.getElementById('statusReqId').value
   const status = document.getElementById('statusSelect').value
@@ -399,14 +485,13 @@ async function saveStatus() {
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 function showTab(tab) {
-  document.getElementById('tabRequests').style.display = tab === 'requests' ? '' : 'none'
   document.getElementById('tabClients').style.display  = tab === 'clients'  ? '' : 'none'
+  document.getElementById('tabRequests').style.display = tab === 'requests' ? '' : 'none'
   document.querySelectorAll('.tab').forEach((el, i) => {
-    el.classList.toggle('active', (i === 0 && tab === 'requests') || (i === 1 && tab === 'clients'))
+    el.classList.toggle('active', (i===0 && tab==='clients') || (i===1 && tab==='requests'))
   })
 }
 
-// Auto-refresh a cada 30s
 setInterval(() => { if (ADMIN_KEY) loadAll() }, 30000)
 </script>
 </body>

@@ -40,13 +40,14 @@ async function searchClientsByName(name) {
   return data || []
 }
 
-// Busca clientes com billing_day igual ao dia informado
+// Busca clientes com billing_day igual ao dia informado E needs_nf = true
 async function getClientsByBillingDay(day) {
   const { data, error } = await supabase
     .from('clients')
     .select('*')
     .eq('active', true)
     .eq('billing_day', day)
+    .eq('needs_nf', true)
   if (error) console.error('[supabase] getClientsByBillingDay:', error.message)
   return data || []
 }
