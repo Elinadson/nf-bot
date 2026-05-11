@@ -44,10 +44,10 @@ app.listen(PORT, async () => {
   }
 
   // Inicia watcher do Google Drive (verifica a cada 2 minutos)
-  if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.DRIVE_FOLDER_ID) {
+  if (process.env.DRIVE_FOLDER_ID) {
     startWatcher(2 * 60 * 1000)
   } else {
-    console.warn('[init] Google Drive não configurado — watcher desativado')
+    console.warn('[init] DRIVE_FOLDER_ID não configurado — watcher desativado')
   }
 
   // Inicia scheduler de lembretes diários

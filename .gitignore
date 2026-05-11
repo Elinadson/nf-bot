@@ -2,3 +2,9 @@
 node_modules/
 logs/
 *.log
+
+# Arquivos temporários e backups
+*.bak
+*.bak2
+*.py
+public/

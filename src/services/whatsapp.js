@@ -36,6 +36,40 @@ async function sendDocument(to, fileUrl, fileName, caption = '') {
   }
 }
 
+// ── Enviar documento via base64 (sem precisar de URL pública) ─────────────────
+async function sendDocumentBase64(to, base64Content, mimeType, fileName, caption = '') {
+  try {
+    await api.post(`/sendMedia/${INST}`, {
+      number:    to,
+      mediatype: 'document',
+      media:     `data:${mimeType};base64,${base64Content}`,
+      fileName,
+      caption
+    })
+  } catch (err) {
+    console.error('[whatsapp] sendDocumentBase64 erro:', err.response?.data || err.message)
+  }
+}
+
+// ── Baixar áudio de mensagem como base64 ────────────────────────────────────
+async function getAudioBase64(msgKey, msgContent) {
+  try {
+    const response = await axios.post(
+      `${BASE}/chat/getBase64FromMediaMessage/${INST}`,
+      { message: { key: msgKey, message: msgContent } },
+      { headers: { apikey: APIKEY, 'Content-Type': 'application/json' } }
+    )
+    const { base64, mimetype } = response.data
+    return {
+      base64,
+      mimeType: (mimetype || 'audio/ogg').split(';')[0].trim()
+    }
+  } catch (err) {
+    console.error('[whatsapp] getAudioBase64 erro:', err.response?.data || err.message)
+    return null
+  }
+}
+
 // ── Configurar webhook na Evolution API ──────────────────────────────────────
 async function setupWebhook() {
   const webhookUrl = `${process.env.WEBHOOK_URL}/webhook/whatsapp`
@@ -59,4 +93,4 @@ async function setupWebhook() {
   }
 }
 
-module.exports = { sendText, sendDocument, setupWebhook }
+module.exports = { sendText, sendDocument, sendDocumentBase64, getAudioBase64, setupWebhook }

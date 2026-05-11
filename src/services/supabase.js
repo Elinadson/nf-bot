@@ -28,7 +28,6 @@ async function getAllClients() {
   return data || []
 }
 
-// Busca clientes por nome (busca parcial, case-insensitive)
 async function searchClientsByName(name) {
   const { data, error } = await supabase
     .from('clients')
@@ -40,7 +39,6 @@ async function searchClientsByName(name) {
   return data || []
 }
 
-// Busca clientes com billing_day igual ao dia informado E needs_nf = true
 async function getClientsByBillingDay(day) {
   const { data, error } = await supabase
     .from('clients')
@@ -53,9 +51,11 @@ async function getClientsByBillingDay(day) {
 }
 
 async function upsertClient(client) {
+  // Se tem id => atualiza pelo id; se não => upsert pelo whatsapp (novo cadastro via bot)
+  const conflictCol = client.id ? 'id' : 'whatsapp'
   const { data, error } = await supabase
     .from('clients')
-    .upsert(client, { onConflict: 'id' })
+    .upsert(client, { onConflict: conflictCol })
     .select()
     .single()
   if (error) throw new Error(error.message)
@@ -123,6 +123,17 @@ async function getRequestById(id) {
   return data
 }
 
+async function getRequestsByClientId(clientId, { limit = 10 } = {}) {
+  const { data, error } = await supabase
+    .from('nf_requests')
+    .select('*')
+    .eq('client_id', clientId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) console.error('[supabase] getRequestsByClientId:', error.message)
+  return data || []
+}
+
 // ── Estado da conversa ────────────────────────────────────────────────────────
 
 async function getConversationState(whatsapp) {
@@ -163,10 +174,55 @@ async function logMessage({ whatsapp, direction, body, clientId = null, requestI
   })
 }
 
+// ── Contratos ─────────────────────────────────────────────────────────────────
+
+async function createContract({ client_id, autentique_id, model, status = 'pending', client_link, studio_link }) {
+  const { data, error } = await supabase
+    .from('contracts')
+    .insert({ client_id, autentique_id, model, status, client_link, studio_link })
+    .select('*, clients(*)')
+    .single()
+  if (error) throw new Error(error.message)
+  return data
+}
+
+async function updateContract(id, updates) {
+  const { data, error } = await supabase
+    .from('contracts')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
+  return data
+}
+
+async function getContractByAutentiqueId(autentiqueId) {
+  const { data } = await supabase
+    .from('contracts')
+    .select('*, clients(*)')
+    .eq('autentique_id', autentiqueId)
+    .single()
+  return data || null
+}
+
+async function getContractsByClientId(clientId, { limit = 5 } = {}) {
+  const { data, error } = await supabase
+    .from('contracts')
+    .select('*')
+    .eq('client_id', clientId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) console.error('[supabase] getContractsByClientId:', error.message)
+  return data || []
+}
+
 module.exports = {
   getClientByPhone, getAllClients, searchClientsByName, getClientsByBillingDay,
   upsertClient, deleteClient,
-  createRequest, updateRequest, getRequestsByStatus, getAllRequests, getRequestById,
+  createRequest, updateRequest, getRequestsByStatus, getAllRequests,
+  getRequestById, getRequestsByClientId,
   getConversationState, setConversationState, clearConversationState,
-  logMessage
+  logMessage,
+  createContract, updateContract, getContractByAutentiqueId, getContractsByClientId
 }

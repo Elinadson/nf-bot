@@ -1,6 +1,8 @@
-const nodemailer = require('nodemailer')
-const https      = require('https')
-const http       = require('http')
+const nodemailer    = require('nodemailer')
+const { google }    = require('googleapis')
+const { GoogleAuth } = require('google-auth-library')
+const path          = require('path')
+const os            = require('os')
 
 const transporter = nodemailer.createTransport({
   host:   process.env.SMTP_HOST,
@@ -12,17 +14,19 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-// ── Baixa PDF de uma URL como buffer ─────────────────────────────────────────
-function fetchBuffer(url) {
-  return new Promise((resolve, reject) => {
-    const proto = url.startsWith('https') ? https : http
-    proto.get(url, (res) => {
-      const chunks = []
-      res.on('data', (c) => chunks.push(c))
-      res.on('end',  () => resolve(Buffer.concat(chunks)))
-      res.on('error', reject)
-    }).on('error', reject)
-  })
+// ── Baixa PDF diretamente pela API do Drive (evita página de confirmação) ─────
+async function fetchPdfBuffer(fileId) {
+  const KEY_FILE = process.env.GOOGLE_SERVICE_ACCOUNT_FILE
+    || path.join(os.homedir(), 'instagram-autoposter/service_account.json')
+
+  const auth  = new GoogleAuth({ keyFile: KEY_FILE, scopes: ['https://www.googleapis.com/auth/drive.readonly'] })
+  const drive = google.drive({ version: 'v3', auth })
+
+  const res = await drive.files.get(
+    { fileId, alt: 'media' },
+    { responseType: 'arraybuffer' }
+  )
+  return Buffer.from(res.data)
 }
 
 // ── Notificação à contabilidade ───────────────────────────────────────────────
@@ -65,13 +69,16 @@ async function sendNFToClient(request, fileUrl, fileName) {
   const client = request.clients
   const val    = Number(request.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
-  // Baixa o PDF para anexar
+  // Baixa o PDF via API do Drive (evita página de confirmação do Google)
   let attachment = null
-  try {
-    const buf = await fetchBuffer(fileUrl)
-    attachment = { filename: fileName, content: buf, contentType: 'application/pdf' }
-  } catch (err) {
-    console.error('[email] Não foi possível baixar o PDF, enviando link:', err.message)
+  const fileId = fileUrl.match(/[-\w]{25,}/)?.[ 0] || null
+  if (fileId) {
+    try {
+      const buf = await fetchPdfBuffer(fileId)
+      attachment = { filename: fileName, content: buf, contentType: 'application/pdf' }
+    } catch (err) {
+      console.error('[email] Não foi possível baixar o PDF, enviando link:', err.message)
+    }
   }
 
   const html = `

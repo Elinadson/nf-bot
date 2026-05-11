@@ -8,15 +8,20 @@
     "dev": "nodemon src/index.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "axios": "^1.7.2",
+    "@anthropic-ai/sdk": "^0.92.0",
+    "@notionhq/client": "^2.2.15",
     "@supabase/supabase-js": "^2.44.4",
-    "@anthropic-ai/sdk": "^0.24.3",
-    "nodemailer": "^6.9.14",
-    "googleapis": "^140.0.1",
-    "node-cron": "^3.0.3",
+    "axios": "^1.7.2",
+    "docxtemplater": "^3.68.6",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "google-auth-library": "^10.6.2",
+    "googleapis": "^140.0.1",
     "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.14",
+    "openai": "^6.35.0",
+    "pizzip": "^3.2.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
